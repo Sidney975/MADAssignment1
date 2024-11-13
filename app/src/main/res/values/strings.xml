@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">assignment1</string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="landing">PopCornMovie</string>
+    <string name="viewProfile">Profile</string>
+    <string name="editProfile">Edit Profile</string>
+    <string name="movieDetail">Movie Details</string>
+    <string name="commentScreen">Comment</string>
+    <string name="addComment">Add Comment</string>
+</resources>
+
+<!--    Login(title = R.string.login),-->
+<!--    Register(title = R.string.login),-->
+<!--    Landing(title = R.string.login),-->
+<!--    viewProfile(title = R.string.login),-->
+<!--    editProfile(title = R.string.login),-->
+<!--    movieDetail(title = R.string.login),-->
+<!--    commentScreen(title = R.string.login),-->
+<!--    addComment(title = R.string.login),-->
