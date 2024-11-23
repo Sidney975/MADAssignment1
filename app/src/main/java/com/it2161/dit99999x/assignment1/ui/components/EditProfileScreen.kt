@@ -27,6 +27,13 @@ import com.it2161.dit99999x.assignment1.MovieRaterApplication
 import com.it2161.dit99999x.assignment1.R
 import com.it2161.dit99999x.assignment1.data.UserProfile
 import android.util.Log // Import for logging
+import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.font.FontWeight
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,8 +45,8 @@ fun EditProfileScreen(
     val context = LocalContext.current
     val application = context.applicationContext as MovieRaterApplication
     val loggedInUser = application.loggedInUser
-    var showAvatarMenu by remember { mutableStateOf(false) }
 
+    // State variables for user inputs
     var userName by remember { mutableStateOf(loggedInUser?.userName ?: "") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
@@ -49,7 +56,9 @@ fun EditProfileScreen(
     var receiveUpdates by remember { mutableStateOf(loggedInUser?.updates ?: false) }
     var yearOfBirth by remember { mutableStateOf(loggedInUser?.yob ?: "") }
     var selectedAvatar by remember { mutableStateOf(loggedInUser?.avatar ?: "") }
+    var showAvatarMenu by remember { mutableStateOf(false) }
 
+    // Error state variables for validation
     var userNameError by remember { mutableStateOf(false) }
     var passwordError by remember { mutableStateOf(false) }
     var confirmPasswordError by remember { mutableStateOf(false) }
@@ -61,49 +70,40 @@ fun EditProfileScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = {
-                    Text("Edit Profile", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
-                },
+                title = { Text("Edit Profile") },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = {
+                        onCancel()
+                    }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 actions = {
                     IconButton(onClick = {
-                        try {
-                            // Validation logic
-                            userNameError = userName.isBlank()
-                            passwordError = password.isBlank()
-                            confirmPasswordError = confirmPassword.isBlank() || confirmPassword != password
-                            emailError = email.isBlank()
-                            genderError = gender.isBlank()
-                            mobileError = mobile.isBlank()
-                            yearOfBirthError = yearOfBirth.isBlank()
+                        // Perform validation and save action
+                        userNameError = userName.isBlank()
+                        passwordError = password.isBlank()
+                        confirmPasswordError = confirmPassword.isBlank() || confirmPassword != password
+                        emailError = email.isBlank() || !email.contains("@")
+                        genderError = gender.isBlank()
+                        mobileError = mobile.isBlank() || !mobile.all { it.isDigit() }
+                        yearOfBirthError = yearOfBirth.isBlank()
 
-                            if (!(userNameError || passwordError || confirmPasswordError || emailError || genderError || mobileError || yearOfBirthError)) {
-                                val updatedUser = loggedInUser?.copy(
-                                    userName = userName,
-                                    password = password,
-                                    email = email,
-                                    gender = gender,
-                                    mobile = mobile,
-                                    updates = receiveUpdates,
-                                    yob = yearOfBirth,
-                                    avatar = selectedAvatar
-                                )
-                                application.userProfile = updatedUser
-                                application.loggedInUser = updatedUser
-                                Log.d("EditProfileScreen", "Updated User: $updatedUser") // Log the updated user profile
-                                navController.popBackStack() // Navigate back
-                            } else {
-                                Log.d("EditProfileScreen", "Validation failed with errors.")
-                            }
-                        } catch (e: Exception) {
-                            Log.e("EditProfileScreen", "Error updating profile: ${e.localizedMessage}", e)
+                        if (!(userNameError || passwordError || confirmPasswordError || emailError || genderError || mobileError || yearOfBirthError)) {
+                            val updatedUser = UserProfile(
+                                userName = userName,
+                                password = password,
+                                email = email,
+                                gender = gender,
+                                mobile = mobile,
+                                updates = receiveUpdates,
+                                yob = yearOfBirth,
+                                avatar = selectedAvatar
+                            )
+                            onUpdateSuccess(updatedUser)
                         }
                     }) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Save")
+                        Icon(Icons.Filled.Check, contentDescription = "Save")
                     }
                 }
             )
@@ -112,12 +112,16 @@ fun EditProfileScreen(
         Column(
             modifier = Modifier
                 .padding(innerPadding)
+                .padding(16.dp)
+                .background(Color.White)
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState()), // Make the column scrollable
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Top
         ) {
-            // Profile picture with click functionality
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Profile Picture and Avatar Selection
             Box(modifier = Modifier.clickable { showAvatarMenu = true }) {
                 val avatarResource = when (selectedAvatar) {
                     "avatar_1" -> R.drawable.avatar_1
@@ -128,17 +132,16 @@ fun EditProfileScreen(
                 Image(
                     painter = painterResource(id = avatarResource),
                     contentDescription = "Avatar",
-                    modifier = Modifier.size(128.dp)
+                    modifier = Modifier
+                        .size(128.dp)
+                        .padding(8.dp)
                 )
             }
 
-            // Avatar selection menu (DropdownMenu) - positioned below the profile picture
+            // Avatar Selection Dropdown Menu
             DropdownMenu(
                 expanded = showAvatarMenu,
-                onDismissRequest = { showAvatarMenu = false },
-                modifier = Modifier
-                    .width(128.dp) // Match the width of the profile picture
-                    .wrapContentSize(Alignment.TopCenter) // Position below the profile picture
+                onDismissRequest = { showAvatarMenu = false }
             ) {
                 DropdownMenuItem(
                     onClick = { selectedAvatar = "avatar_1"; showAvatarMenu = false },
@@ -176,146 +179,111 @@ fun EditProfileScreen(
                 )
             }
 
-            // Input fields for user details (similar to RegisterUserScreen)
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // User Input Fields
             OutlinedTextField(
                 value = userName,
                 onValueChange = { userName = it },
                 label = { Text("User Name") },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 isError = userNameError,
                 supportingText = { if (userNameError) Text("User name is required") else null }
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
                 label = { Text("Password") },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 isError = passwordError,
                 supportingText = { if (passwordError) Text("Password is required") else null }
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
             OutlinedTextField(
                 value = confirmPassword,
                 onValueChange = { confirmPassword = it },
                 label = { Text("Confirm Password") },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 isError = confirmPasswordError,
                 supportingText = { if (confirmPasswordError) Text("Passwords do not match") else null }
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
                 label = { Text("Email") },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 isError = emailError,
-                supportingText = { if (emailError) Text("Email is required") else null }
+                supportingText = { if (emailError) Text("Valid email is required") else null }
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
-            // Gender selection (Radio buttons)
-            Row {
+            // Gender Selection (Radio Buttons)
+            Row(
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .horizontalScroll(rememberScrollState()), // Add horizontal scroll
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 RadioButton(selected = gender == "Male", onClick = { gender = "Male" })
                 Text("Male")
                 RadioButton(selected = gender == "Female", onClick = { gender = "Female" })
                 Text("Female")
-            }
-            Row {
                 RadioButton(selected = gender == "Non-Binary", onClick = { gender = "Non-Binary" })
                 Text("Non-Binary")
                 RadioButton(selected = gender == "Prefer not to say", onClick = { gender = "Prefer not to say" })
                 Text("Prefer not to say")
             }
             if (genderError) {
-                Text("Gender is required", color = MaterialTheme.colorScheme.error)
+                Text("Gender is required", color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(horizontal = 16.dp))
             }
             Spacer(modifier = Modifier.height(16.dp))
+
+//            Row(
+//                modifier = Modifier
+//                    .padding(bottom = 16.dp)
+//                    .horizontalScroll(rememberScrollState()), // Add horizontal scroll
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                RadioButton(selected = gender == "Male", onClick = { gender = "Male" })
+//                Text("Male")
+//                RadioButton(selected = gender == "Female", onClick = { gender = "Female" })
+//                Text("Female")
+//                RadioButton(selected = gender == "Non-Binary", onClick = { gender = "Non-Binary" })
+//                Text("Non-Binary")
+//                RadioButton(selected = gender == "Prefer not to say", onClick = { gender = "Prefer not to say" })
+//                Text("Prefer not to say")
+//            }
+//            if (genderError) {
+//                Text("Gender is required", color = MaterialTheme.colorScheme.error)
+//            }
+//            Spacer(modifier = Modifier.height(6.dp))
 
             OutlinedTextField(
                 value = mobile,
                 onValueChange = { mobile = it },
                 label = { Text("Mobile Number") },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 isError = mobileError,
-                supportingText = { if (mobileError) Text("Mobile number is required") else null }
+                supportingText = { if (mobileError) Text("Valid mobile number is required") else null }
             )
             Spacer(modifier = Modifier.height(16.dp))
-
-            Row {
-                Checkbox(checked = receiveUpdates, onCheckedChange = { receiveUpdates = it })
-                Text("Receive Updates")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Year of birth (Dropdown)
-            var expanded by remember { mutableStateOf(false) }
-            val years = (1920..2023).toList() // Generate years from 1920 to 2023
-            OutlinedTextField(
-                value = yearOfBirth,
-                onValueChange = { yearOfBirth = it },
-                label = { Text("Year of Birth") },
-                modifier = Modifier.fillMaxWidth(),
-                readOnly = true,
-                trailingIcon = {
-                    IconButton(onClick = { expanded = true }) {
-                        Icon(painterResource(id = R.drawable.ic_off_visibility_icon), contentDescription = "Dropdown")
-                    }
-                },
-                isError = yearOfBirthError,
-                supportingText = { if (yearOfBirthError) Text("Year of birth is required") else null }
-            )
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                years.forEach { year ->
-                    DropdownMenuItem(onClick = {
-                        yearOfBirth = year.toString()
-                        expanded = false
-                    }, text = { Text(year.toString()) })
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-            // Other UI components like Avatar Image, TextFields, DropdownMenu, etc.
-
-            Button(onClick = {
-                try {
-                    // Field validation
-                    userNameError = userName.isBlank()
-                    passwordError = password.isBlank()
-                    confirmPasswordError = confirmPassword.isBlank() || confirmPassword != password
-                    emailError = email.isBlank()
-                    genderError = gender.isBlank()
-                    mobileError = mobile.isBlank()
-                    yearOfBirthError = yearOfBirth.isBlank()
-
-                    if (!(userNameError || passwordError || confirmPasswordError || emailError || genderError || mobileError || yearOfBirthError)) {
-                        val userProfile = UserProfile(userName, password, email, gender, mobile, receiveUpdates, yearOfBirth, selectedAvatar)
-                        Log.d("EditProfileScreen", "Updated UserProfile: $userProfile")
-                        onUpdateSuccess(userProfile)
-                    } else {
-                        Log.d("EditProfileScreen", "Validation failed. Errors in input fields.")
-                    }
-                } catch (e: Exception) {
-                    Log.e("EditProfileScreen", "Exception during submission: ${e.localizedMessage}", e)
-                }
-            }) {
-                Text("Submit")
-            }
         }
     }
 }
+
+
+
 
 // Helper composable for displaying an avatar image
 @Composable

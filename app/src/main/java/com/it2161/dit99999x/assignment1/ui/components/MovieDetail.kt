@@ -33,6 +33,7 @@ import com.it2161.dit99999x.assignment1.R
 import com.it2161.dit99999x.assignment1.data.Comments
 import com.it2161.dit99999x.assignment1.data.MovieItem
 import com.it2161.dit99999x.assignment1.data.calculateDuration
+import com.it2161.dit99999x.assignment1.data.getUserInitials
 import com.it2161.dit99999x.assignment1.data.jsonData
 import java.text.SimpleDateFormat
 import java.util.*

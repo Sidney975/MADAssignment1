@@ -33,3 +33,13 @@ fun calculateDuration(dateString: String, timeString: String): String {
         else -> "Just now"
     }
 }
+
+// Function to get user initials
+fun getUserInitials(username: String): String {
+    val words = username.split(Regex("(?<=[a-z])(?=[A-Z])|_|\\s+")) // Split by camel case, underscore, or whitespace
+    return when (words.size) {
+        0 -> ""
+        1 -> words[0].substring(0, 1).uppercase() // If only one word, take the first letter
+        else -> words.joinToString(".") { it.substring(0, 1).uppercase() } // Otherwise, take first letters of each word
+    }
+}

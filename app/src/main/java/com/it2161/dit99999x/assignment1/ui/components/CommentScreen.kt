@@ -18,6 +18,7 @@ import com.google.gson.Gson
 import com.it2161.dit99999x.assignment1.MovieRaterApplication
 import com.it2161.dit99999x.assignment1.data.Comments
 import com.it2161.dit99999x.assignment1.data.calculateDuration
+import com.it2161.dit99999x.assignment1.data.getUserInitials
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -70,12 +71,3 @@ fun CommentScreen(navController: NavController, movieTitle: String, commentJson:
     }
 }
 
-// Function to get user initials
-fun getUserInitials(username: String): String {
-    val words = username.split(Regex("(?<=[a-z])(?=[A-Z])|_|\\s+")) // Split by camel case, underscore, or whitespace
-    return when (words.size) {
-        0 -> ""
-        1 -> words[0].substring(0, 1).uppercase() // If only one word, take the first letter
-        else -> words.joinToString(".") { it.substring(0, 1).uppercase() } // Otherwise, take first letters of each word
-    }
-}
