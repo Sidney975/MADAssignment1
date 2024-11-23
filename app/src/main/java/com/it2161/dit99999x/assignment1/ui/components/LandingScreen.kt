@@ -36,7 +36,8 @@ import com.it2161.dit99999x.assignment1.PopCornMovie
 fun LandingScreen(navController: NavController) {
     val context = LocalContext.current
     val application = context.applicationContext as MovieRaterApplication
-    val movieList = remember { application.getMovies(context) }
+    val movieList = application.data
+
 
     Scaffold(
         topBar = {

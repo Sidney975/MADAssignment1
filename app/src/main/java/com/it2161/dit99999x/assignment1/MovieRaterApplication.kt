@@ -203,13 +203,4 @@ class MovieRaterApplication : Application() {
         return imageBitmap
     }
 
-
-    fun getMovies(context: Context): List<MovieItem> {
-        if (data.isEmpty()) {
-            loadMovieDataIntoList(context)
-        }
-        return data
-    }
-
-
 }

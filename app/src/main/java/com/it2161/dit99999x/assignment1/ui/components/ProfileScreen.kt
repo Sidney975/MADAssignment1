@@ -18,7 +18,6 @@ import com.it2161.dit99999x.assignment1.LocalLoggedInUser
 import com.it2161.dit99999x.assignment1.MovieRaterApplication
 import com.it2161.dit99999x.assignment1.PopCornMovie
 import com.it2161.dit99999x.assignment1.R
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(navController: NavController) {
@@ -29,7 +28,7 @@ fun ProfileScreen(navController: NavController) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Profile", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center) },
+                title = { Text("Profile") },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigate(PopCornMovie.Landing.name) }) { // Navigate back
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
@@ -37,7 +36,7 @@ fun ProfileScreen(navController: NavController) {
                 },
                 actions = {
                     IconButton(onClick = { navController.navigate(PopCornMovie.editProfile.name) }) {
-                        Icon(Icons.Filled.Edit, contentDescription = "Edit")
+                        Icon(Icons.Filled.Edit, contentDescription = "Edit Profile")
                     }
                 }
             )
@@ -46,35 +45,83 @@ fun ProfileScreen(navController: NavController) {
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Top
         ) {
+            // User Avatar
             val avatarResource = when (loggedInUser?.avatar) {
                 "avatar_1" -> R.drawable.avatar_1
                 "avatar_2" -> R.drawable.avatar_2
                 "avatar_3" -> R.drawable.avatar_3
                 else -> R.drawable.ic_account_circle // Default placeholder
             }
-            val gender = when (loggedInUser?.gender) {
-                "M" -> "Male"
-                "F" -> "Female"
-                "NB" -> "Non-Binary"
-                else -> "Nill"
-            }
             Image(
                 painter = painterResource(id = avatarResource),
                 contentDescription = "Avatar",
-                modifier = Modifier.size(128.dp)
+                modifier = Modifier
+                    .size(120.dp)
+                    .padding(8.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Display user details from loggedInUser
-            loggedInUser?.let { user ->
-                Text("Name: ${user.userName}")
-                Text("Email: ${user.email}")
-                Text("Gender: ${user.gender}")
-                Text("Phone: ${user.mobile}")
+            // User Details Card
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                shape = MaterialTheme.shapes.medium,
+                elevation = CardDefaults.cardElevation(8.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Text(
+                        text = "Name: ${loggedInUser?.userName ?: "N/A"}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    Text(
+                        text = "Email: ${loggedInUser?.email ?: "N/A"}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    Text(
+                        text = "Gender: ${when (loggedInUser?.gender) {
+                            "Male" -> "Male"
+                            "Female" -> "Female"
+                            "Non-Binary" -> "Non-Binary"
+                            else -> "N/A"
+                        }}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    Text(
+                        text = "Phone: ${loggedInUser?.mobile ?: "N/A"}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // Logout Button
+            Button(
+                onClick = {
+                    application.logoutUser()
+                    navController.navigate(PopCornMovie.Login.name) {
+                        popUpTo(PopCornMovie.Login.name) { inclusive = true }
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Text("Logout", color = MaterialTheme.colorScheme.onError)
             }
         }
     }

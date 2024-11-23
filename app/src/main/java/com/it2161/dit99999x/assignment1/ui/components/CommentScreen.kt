@@ -26,7 +26,7 @@ import java.util.*
 fun CommentScreen(navController: NavController, movieTitle: String, commentJson: String) {
     val context = LocalContext.current
     val application = context.applicationContext as MovieRaterApplication
-    val movieList = remember { application.getMovies(context) }
+    val movieList = remember { application.data }
     val movie = movieList.find { it.title == movieTitle }
     val comment = Gson().fromJson(commentJson, Comments::class.java) // Convert JSON back to Comments object
     if (comment != null) {

@@ -32,13 +32,12 @@ fun MovieViewerApp() {
     val context = LocalContext.current
     val application = context.applicationContext as MovieRaterApplication
     val navController = rememberNavController()
-    var movieList by remember { mutableStateOf(application.getMovies(context)) }
+    var movieList by remember { mutableStateOf(application.data) }
 
-    // Callback function to update movieList with new comments
     fun onCommentAdded(updatedMovie: MovieItem) {
         movieList = movieList.map { movie ->
             if (movie.title == updatedMovie.title) updatedMovie else movie
-        }
+        }.toMutableList()
     }
 
     CompositionLocalProvider(

@@ -73,7 +73,6 @@ fun RegisterUserScreen(
             onValueChange = { userName = it },
             label = { Text("User Name") },
             modifier = Modifier.widthIn(max = screenWidth * 0.8f),
-            shape = RoundedCornerShape(8.dp),
             isError = userNameError,
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary, // Customize border color
@@ -114,7 +113,7 @@ fun RegisterUserScreen(
             modifier = Modifier.widthIn(max = screenWidth * 0.8f),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             isError = emailError,
-            supportingText = { if (emailError) Text("Email is required") else null }
+            supportingText = { if (emailError) Text("Valid email is required") else null }
         )
         Spacer(modifier = Modifier.height(6.dp))
 
@@ -146,7 +145,7 @@ fun RegisterUserScreen(
             modifier = Modifier.widthIn(max = screenWidth * 0.8f),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
             isError = mobileError,
-            supportingText = { if (mobileError) Text("Mobile number is required") else null }
+            supportingText = { if (mobileError) Text("Valid mobile number is required") else null }
         )
         Spacer(modifier = Modifier.height(6.dp))
 
@@ -195,15 +194,17 @@ fun RegisterUserScreen(
             userNameError = userName.isBlank()
             passwordError = password.isBlank()
             confirmPasswordError = confirmPassword.isBlank() || confirmPassword != password
-            emailError = email.isBlank()
+            emailError = email.isBlank() || !email.contains("@")
             genderError = gender.isBlank()
-            mobileError = mobile.isBlank()
+            mobileError = mobile.isBlank() || !mobile.all { it.isDigit() }
             yearOfBirthError = yearOfBirth.isBlank()
 
             if (!(userNameError || passwordError || confirmPasswordError || emailError || genderError || mobileError || yearOfBirthError)) {
                 val userProfile = UserProfile(userName, password, email, gender, mobile, receiveUpdates, yearOfBirth, "nothing")
                 onRegisterSuccess(userProfile)
+                println(userProfile)
             }
+
         },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(8.dp)
