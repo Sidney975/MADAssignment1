@@ -170,7 +170,7 @@ fun RegisterUserScreen(
             readOnly = true,
             trailingIcon = {
                 IconButton(onClick = { expanded = true }) {
-                    Icon(painterResource(id = R.drawable.ic_off_visibility_icon), contentDescription = "Dropdown")
+                    Icon(painterResource(id = R.drawable.dropdown), contentDescription = "Dropdown")
                 }
             },
             isError = yearOfBirthError,

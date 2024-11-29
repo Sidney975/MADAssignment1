@@ -174,7 +174,6 @@ class MovieRaterApplication : Application() {
     private fun loadData(context: Context) {
         loadProfileFromFile(context)
         loadMovieDataIntoList(context)
-
     }
 
     //Gets image vector.

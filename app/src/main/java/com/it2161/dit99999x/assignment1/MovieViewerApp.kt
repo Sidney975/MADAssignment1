@@ -38,6 +38,9 @@ fun MovieViewerApp() {
         movieList = movieList.map { movie ->
             if (movie.title == updatedMovie.title) updatedMovie else movie
         }.toMutableList()
+
+        // save the stupid comment into the database
+        application.data = movieList
     }
 
     CompositionLocalProvider(

@@ -67,8 +67,8 @@ fun LoginScreen(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             trailingIcon = {
                 val image = if (passwordVisible)
-                    painterResource(id = R.drawable.ic_off_visibility_icon)
-                else painterResource(id = R.drawable.ic_visibility_icon)
+                    painterResource(id = R.drawable.ic_visibility_icon)
+                else painterResource(id = R.drawable.ic_off_visibility_icon)
 
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
                     Icon(

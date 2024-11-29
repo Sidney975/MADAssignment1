@@ -121,8 +121,11 @@ fun EditProfileScreen(
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Profile Picture and Avatar Selection
-            Box(modifier = Modifier.clickable { showAvatarMenu = true }) {
+            Box(
+                modifier = Modifier
+                    .clickable { showAvatarMenu = true }
+                    .wrapContentSize(Alignment.Center)
+            ) {
                 val avatarResource = when (selectedAvatar) {
                     "avatar_1" -> R.drawable.avatar_1
                     "avatar_2" -> R.drawable.avatar_2
@@ -136,48 +139,50 @@ fun EditProfileScreen(
                         .size(128.dp)
                         .padding(8.dp)
                 )
+
+                // Avatar Selection Dropdown Menu
+                DropdownMenu(
+                    expanded = showAvatarMenu,
+                    onDismissRequest = { showAvatarMenu = false },
+                    modifier = Modifier.wrapContentSize(Alignment.Center)
+                ) {
+                    DropdownMenuItem(
+                        onClick = { selectedAvatar = "avatar_1"; showAvatarMenu = false },
+                        text = {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Image(painter = painterResource(id = R.drawable.avatar_1), contentDescription = "Avatar 1", modifier = Modifier.size(32.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Avatar 1")
+                            }
+                        }
+                    )
+                    DropdownMenuItem(
+                        onClick = { selectedAvatar = "avatar_2"; showAvatarMenu = false },
+                        text = {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Image(painter = painterResource(id = R.drawable.avatar_2), contentDescription = "Avatar 2", modifier = Modifier.size(32.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Avatar 2")
+                            }
+                        }
+                    )
+                    DropdownMenuItem(
+                        onClick = { selectedAvatar = "avatar_3"; showAvatarMenu = false },
+                        text = {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Image(painter = painterResource(id = R.drawable.avatar_3), contentDescription = "Avatar 3", modifier = Modifier.size(32.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Avatar 3")
+                            }
+                        }
+                    )
+                    DropdownMenuItem(
+                        onClick = { selectedAvatar = ""; showAvatarMenu = false },
+                        text = { Text("Remove Avatar") }
+                    )
+                }
             }
 
-            // Avatar Selection Dropdown Menu
-            DropdownMenu(
-                expanded = showAvatarMenu,
-                onDismissRequest = { showAvatarMenu = false }
-            ) {
-                DropdownMenuItem(
-                    onClick = { selectedAvatar = "avatar_1"; showAvatarMenu = false },
-                    text = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Image(painter = painterResource(id = R.drawable.avatar_1), contentDescription = "Avatar 1", modifier = Modifier.size(32.dp))
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text("Avatar 1")
-                        }
-                    }
-                )
-                DropdownMenuItem(
-                    onClick = { selectedAvatar = "avatar_2"; showAvatarMenu = false },
-                    text = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Image(painter = painterResource(id = R.drawable.avatar_2), contentDescription = "Avatar 2", modifier = Modifier.size(32.dp))
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text("Avatar 2")
-                        }
-                    }
-                )
-                DropdownMenuItem(
-                    onClick = { selectedAvatar = "avatar_3"; showAvatarMenu = false },
-                    text = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Image(painter = painterResource(id = R.drawable.avatar_3), contentDescription = "Avatar 3", modifier = Modifier.size(32.dp))
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text("Avatar 3")
-                        }
-                    }
-                )
-                DropdownMenuItem(
-                    onClick = { selectedAvatar = ""; showAvatarMenu = false },
-                    text = { Text("Remove Avatar") }
-                )
-            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
