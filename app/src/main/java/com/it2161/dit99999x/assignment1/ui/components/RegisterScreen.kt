@@ -24,6 +24,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.it2161.dit99999x.assignment1.R
 import com.it2161.dit99999x.assignment1.data.UserProfile
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -170,7 +172,7 @@ fun RegisterUserScreen(
             readOnly = true,
             trailingIcon = {
                 IconButton(onClick = { expanded = true }) {
-                    Icon(painterResource(id = R.drawable.dropdown), contentDescription = "Dropdown")
+                    Icon(imageVector = Icons.Filled.KeyboardArrowDown, contentDescription = "Dropdown")
                 }
             },
             isError = yearOfBirthError,

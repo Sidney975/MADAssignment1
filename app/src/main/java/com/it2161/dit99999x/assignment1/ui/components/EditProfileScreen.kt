@@ -31,6 +31,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
@@ -57,6 +58,7 @@ fun EditProfileScreen(
     var yearOfBirth by remember { mutableStateOf(loggedInUser?.yob ?: "") }
     var selectedAvatar by remember { mutableStateOf(loggedInUser?.avatar ?: "") }
     var showAvatarMenu by remember { mutableStateOf(false) }
+    var yearDropdownExpanded by remember { mutableStateOf(false) }
 
     // Error state variables for validation
     var userNameError by remember { mutableStateOf(false) }
@@ -253,6 +255,7 @@ fun EditProfileScreen(
             }
             Spacer(modifier = Modifier.height(16.dp))
 
+
 //            Row(
 //                modifier = Modifier
 //                    .padding(bottom = 16.dp)
@@ -273,6 +276,7 @@ fun EditProfileScreen(
 //            }
 //            Spacer(modifier = Modifier.height(6.dp))
 
+
             OutlinedTextField(
                 value = mobile,
                 onValueChange = { mobile = it },
@@ -282,6 +286,54 @@ fun EditProfileScreen(
                 isError = mobileError,
                 supportingText = { if (mobileError) Text("Valid mobile number is required") else null }
             )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier.padding(bottom = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = receiveUpdates,
+                    onCheckedChange = { receiveUpdates = it }
+                )
+                Text("Receive Updates")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+
+
+
+            // Year of Birth Dropdown
+            OutlinedTextField(
+                value = yearOfBirth,
+                onValueChange = { yearOfBirth = it },
+                label = { Text("Year of Birth") },
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                readOnly = true,
+                trailingIcon = {
+                    IconButton(onClick = { yearDropdownExpanded = true }) {
+                        Icon(Icons.Filled.KeyboardArrowDown, contentDescription = "Dropdown")
+                    }
+                },
+                isError = yearOfBirthError,
+                supportingText = { if (yearOfBirthError) Text("Year of birth is required") else null }
+            )
+            DropdownMenu(
+                expanded = yearDropdownExpanded,
+                onDismissRequest = { yearDropdownExpanded = false }
+            ) {
+                (1920..2023).forEach { year ->
+                    DropdownMenuItem(
+                        onClick = {
+                            yearOfBirth = year.toString()
+                            yearDropdownExpanded = false
+                        },
+                        text = { Text(year.toString()) }
+                    )
+                }
+            }
+
             Spacer(modifier = Modifier.height(16.dp))
         }
     }

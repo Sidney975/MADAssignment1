@@ -101,7 +101,18 @@ fun ProfileScreen(navController: NavController) {
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     Text(
+                        text = "Year of Birth: ${loggedInUser?.yob}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    Text(
                         text = "Phone: ${loggedInUser?.mobile ?: "N/A"}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    Spacer(modifier = Modifier.height(15.dp))
+                    Text(
+                        text = if (loggedInUser?.updates == true) "Will Receive Updates" else "Does not receive updates",
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
